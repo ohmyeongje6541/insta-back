@@ -63,4 +63,18 @@ public class PostService {
             .toList();
     }
 
+    @Transactional
+    public void delete(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.NOT_POST_OWNER);
+        }
+
+        postRepository.delete(post);
+
+
+    }
+
 }
