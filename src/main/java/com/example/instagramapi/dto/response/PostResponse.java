@@ -15,7 +15,7 @@ public class PostResponse {
     private String imageUrl;
     private LocalDateTime createdAt;
 
-    private UserResponse user;
+    private UserResponse author;
 
     private boolean liked;
     private long likeCount;
@@ -26,26 +26,30 @@ public class PostResponse {
             .id(post.getId())
             .content(post.getContent())
             .imageUrl(post.getImageUrl())
-            .user(UserResponse.from(post.getUser()))
+            .author(UserResponse.from(post.getUser()))
             .createdAt(post.getCreatedAt())
             .liked(false)
             .likeCount(0)
             .commentCount(0)
             .build();
-
     }
 
-    public static PostResponse from(Post post, boolean liked, long likeCount, long commentCount) {
+    public static PostResponse from(
+        Post post,
+        boolean liked,
+        long likeCount,
+        long commentCount
+    ) {
         return PostResponse.builder()
             .id(post.getId())
             .content(post.getContent())
             .imageUrl(post.getImageUrl())
-            .user(UserResponse.from(post.getUser()))
+            .author(UserResponse.from(post.getUser()))
             .createdAt(post.getCreatedAt())
             .liked(liked)
             .likeCount(likeCount)
             .commentCount(commentCount)
             .build();
-
     }
+
 }
