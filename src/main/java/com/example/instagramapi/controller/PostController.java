@@ -1,9 +1,12 @@
 package com.example.instagramapi.controller;
 
+import com.example.instagramapi.dto.request.CommentCreateRequest;
 import com.example.instagramapi.dto.request.PostCreateRequest;
 import com.example.instagramapi.dto.response.ApiResponse;
+import com.example.instagramapi.dto.response.CommentResponse;
 import com.example.instagramapi.dto.response.PostResponse;
 import com.example.instagramapi.security.CustomUserDetails;
+import com.example.instagramapi.service.CommentService;
 import com.example.instagramapi.service.PostService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> create(
@@ -55,4 +59,17 @@ public class PostController {
         postService.delete(id, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<ApiResponse<CommentResponse>> createComment(
+        @PathVariable Long id,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @Valid @RequestBody CommentCreateRequest request
+    ) {
+        CommentResponse response = commentService.create(id, userDetails.getId(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+
+    }
+
+
 }
