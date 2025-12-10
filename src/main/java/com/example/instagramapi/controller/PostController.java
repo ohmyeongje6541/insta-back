@@ -71,5 +71,12 @@ public class PostController {
 
     }
 
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<ApiResponse<List<CommentResponse>>> getComments(
+        @PathVariable Long id
+    ) {
+        List<CommentResponse> response = commentService.findByPostId(id);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 
 }
