@@ -42,25 +42,21 @@ public class PostController {
             .body(ApiResponse.success(response));
     }
 
-    @PostMapping("/{id}/like")
-    public ResponseEntity<ApiResponse<LikeResponse>> like(
-        @PathVariable Long id,
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<PostResponse>>> findAll(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        LikeResponse response = postLikeService.like(id, userDetails.getId());
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
-
-
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<PostResponse>>> findAll() {
-        List<PostResponse> posts = postService.findAll();
+        Long userId = userDetails != null ? userDetails.getId() : null;
+        List<PostResponse> posts = postService.findAll(userId);
         return ResponseEntity.ok(ApiResponse.success(posts));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PostResponse>> findById(@PathVariable Long id) {
-        PostResponse response = postService.findById(id);
+    public ResponseEntity<ApiResponse<PostResponse>> findById(
+        @PathVariable Long id,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        PostResponse response = postService.findById(id, userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -101,12 +97,21 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{id}/like")
+    public ResponseEntity<ApiResponse<LikeResponse>> like(
+        @PathVariable Long id,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        LikeResponse response = postLikeService.like(userDetails.getId(), id);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     @DeleteMapping("/{id}/like")
     public ResponseEntity<ApiResponse<LikeResponse>> unlike(
         @PathVariable Long id,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        LikeResponse response = postLikeService.unlike(id, userDetails.getId());
+        LikeResponse response = postLikeService.unlike(userDetails.getId(), id);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
