@@ -79,4 +79,13 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @DeleteMapping("/{id}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        commentService.delete(commentId, userDetails.getId());
+        return ResponseEntity.noContent().build();
+    }
+
 }
