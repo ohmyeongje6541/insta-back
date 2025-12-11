@@ -4,9 +4,11 @@ import com.example.instagramapi.dto.request.CommentCreateRequest;
 import com.example.instagramapi.dto.request.PostCreateRequest;
 import com.example.instagramapi.dto.response.ApiResponse;
 import com.example.instagramapi.dto.response.CommentResponse;
+import com.example.instagramapi.dto.response.LikeResponse;
 import com.example.instagramapi.dto.response.PostResponse;
 import com.example.instagramapi.security.CustomUserDetails;
 import com.example.instagramapi.service.CommentService;
+import com.example.instagramapi.service.PostLikeService;
 import com.example.instagramapi.service.PostService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
     private final CommentService commentService;
+    private final PostLikeService postLikeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> create(
@@ -38,6 +41,16 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(response));
     }
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<ApiResponse<LikeResponse>> like(
+        @PathVariable Long id,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        LikeResponse response = postLikeService.like(id, userDetails.getId());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<PostResponse>>> findAll() {
