@@ -1,12 +1,14 @@
 package com.example.instagramapi.service;
 
 import com.example.instagramapi.dto.response.FollowResponse;
+import com.example.instagramapi.dto.response.UserResponse;
 import com.example.instagramapi.entity.Follow;
 import com.example.instagramapi.entity.User;
 import com.example.instagramapi.exception.CustomException;
 import com.example.instagramapi.exception.ErrorCode;
 import com.example.instagramapi.repository.FollowRepository;
 import com.example.instagramapi.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +74,25 @@ public class FollowService {
         followRepository.delete(follow);
 
         return getFollowCounts(following.getId(), false);
+    }
+
+    public List<UserResponse> getFollowers(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return followRepository.findFollowersByFollowingId(user.getId()).stream()
+            .map(follow -> UserResponse.from(follow.getFollower()))
+            .toList();
+    }
+
+    //팔로잉 목록
+    public List<UserResponse> getFollowings(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return followRepository.findFollowersByFollowingId(user.getId()).stream()
+            .map(follow -> UserResponse.from(follow.getFollowing()))
+            .toList();
     }
 
 }

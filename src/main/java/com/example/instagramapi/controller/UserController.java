@@ -84,7 +84,23 @@ public class UserController {
 
     // TODO: 팔로워 목록 조회 API 추가
     // GET /api/users/{username}/followers
+    @GetMapping("/{username}/followers")
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getFollowers(
+        @PathVariable String username,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<UserResponse> responses = followService.getFollowers(username);
+        return ResponseEntity.ok(ApiResponse.success(responses));
+    }
 
     // TODO: 팔로잉 목록 조회 API 추가
     // GET /api/users/{username}/following
+    @GetMapping("/{username}/following")
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getFollowings(
+        @PathVariable String username,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<UserResponse> responses = followService.getFollowings(username);
+        return ResponseEntity.ok(ApiResponse.success(responses));
+    }
 }
