@@ -46,4 +46,20 @@ public class PostLikeService {
 
 
     }
+
+    @Transactional
+    public LikeResponse unlike(Long userId, Long postId) {
+        if (!postRepository.existsById(postId)) {
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        }
+
+        PostLike postlike = postLikeRepository.findByUserIdAndPostId(userId, postId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_LIKED));
+
+        postLikeRepository.delete(postlike);
+
+        long likeCount = postLikeRepository.countByPostId(postId);
+        return LikeResponse.of(false, likeCount);
+
+    }
 }
