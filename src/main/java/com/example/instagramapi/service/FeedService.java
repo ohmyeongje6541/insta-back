@@ -50,10 +50,16 @@ public class FeedService {
 
         return SliceResponse.from(posts, content);
 
+    }
 
+    // 전체 게시물
+    public SliceResponse<PostResponse> getExplore(Long userId, Pageable pageable) {
+        Slice<Post> posts = postRepository.findAllWithUserPaging(pageable);
 
-
-
+        List<PostResponse> content = posts.getContent().stream()
+            .map(post -> toPostResponseWithStats(post, userId))
+            .toList();
+        return SliceResponse.from(posts, content);
     }
 
 }
